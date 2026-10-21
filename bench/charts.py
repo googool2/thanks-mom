@@ -34,9 +34,6 @@ def count_fmt(n):
     return f"{n:,}"
 
 
-def tokens_fmt(n):
-    return f"{n / 1000:.1f}K" if n >= 10_000 else f"{n:,}"
-
 
 def change(pct):
     d = 100 - pct
@@ -174,8 +171,7 @@ def main():
                  f"Tests pass after cleanup · {r['files_checked'] - r['lost']}/{r['files_checked']} files accounted for · "
                  f"{r['traps'][0]}/{r['traps'][1]} traps left alone"],
                 [("Project size", *r["size"], size_fmt), ("Files", *r["files"], count_fmt),
-                 ("Items at the root", *r["root_items"], count_fmt),
-                 ("Recursive file listing (≈ tokens)", *r["listing_tokens"], tokens_fmt)], t),
+                 ("Items at the root", *r["root_items"], count_fmt)], t),
         }
         for name, content in charts.items():
             (OUT / f"{name}-{mode}.svg").write_text(content, encoding="utf-8")

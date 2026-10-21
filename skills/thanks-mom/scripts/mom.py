@@ -6,6 +6,9 @@
                                         run the plan. Undecided 'ask' items are KEPT.
   mom.py undo  ROOT [ZIP]               put back everything the last (or given) run archived or moved
   mom.py map   ROOT                     compact folder tree for PROJECT_MAP.md
+  mom.py worktrees ROOT                 which git worktrees are safe to remove (read-only)
+  mom.py report DIR                     every project under DIR: size, rebuildable, worktrees (read-only)
+  mom.py prune ROOT [--days 30]         delete safety zips older than N days from .mom/
 
 Stdlib only. Nothing is removed until the archive zip is written and verified.
 IDS = comma separated plan ids or ranges, e.g. --archive 3,7,10-14
@@ -13,7 +16,7 @@ IDS = comma separated plan ids or ranges, e.g. --archive 3,7,10-14
 import argparse, datetime, difflib, hashlib, json, os, re, shutil, stat, subprocess, sys, time, zipfile
 from pathlib import Path
 
-__version__ = "1.1.1"
+__version__ = "1.2.0"
 
 STATE = ".mom"
 VCS = {".git", ".hg", ".svn", STATE}
@@ -417,9 +420,15 @@ def summary(plan):
             print(f"    {human(i['size']):>10}  {i['path']}  - {i['reason'].split(';')[0]}, untouched {i['age_days']}d")
         if len(info) > 15:
             print(f"    ... {len(info) - 15} more in .mom/plan.json")
+        if any("worktree" in i["reason"] for i in info):
+            print("    details and which ones are safe to remove: mom.py worktrees ROOT")
     for s in plan["similar"]:
         pairs = [f"#{n} {p}" for n, p in zip(s["files"], s["paths"])]
         print(f"  similar scripts {s['id']} (merge into one tool?): {', '.join(pairs[:8])}{' ...' if len(pairs) > 8 else ''}")
+    old = old_archives(Path(plan["root"]), 30)
+    if old:
+        print(f"  {len(old)} safety zips in .mom/ are older than 30 days ({human(sum(f.stat().st_size for f in old))}): "
+              f"mom.py prune ROOT removes them")
     print("Plan: .mom/plan.json   Next: mom.py apply ROOT [--keep IDS] [--archive IDS] [--delete IDS] [--move IDS]")
 
 
@@ -673,10 +682,127 @@ def project_map(root, depth=3):
     print(f"{root.name}/\n" + "\n".join("  " + ln for ln in out))
 
 
+# ---------------------------------------------------------------- worktrees / report / prune
+def git(cwd, *args):
+    """stdout of a git command, or None if it failed."""
+    try:
+        r = subprocess.run(["git", "-c", "core.quotepath=off", *args], cwd=cwd, capture_output=True, text=True,
+                           encoding="utf-8", errors="replace")
+    except OSError:
+        return None
+    return r.stdout.strip() if r.returncode == 0 else None
+
+
+def worktrees(root):
+    """Read-only: list git worktrees with size, unsaved work and unmerged commits. Removes nothing."""
+    out = git(root, "worktree", "list", "--porcelain")
+    if out is None:
+        sys.exit("not a git repository (or git is not installed)")
+    entries, cur = [], {}
+    for line in out.splitlines() + [""]:
+        if not line:
+            if cur:
+                entries.append(cur)
+            cur = {}
+            continue
+        key, _, value = line.partition(" ")
+        cur[key] = value or True
+    base = git(root, "symbolic-ref", "--short", "refs/remotes/origin/HEAD") or \
+        next((b for b in ("main", "master") if git(root, "rev-parse", "--verify", "-q", b)), None)
+    rows = []
+    for e in entries[1:]:  # the first entry is the main checkout itself
+        p = Path(e["worktree"])
+        branch = str(e.get("branch", "")).replace("refs/heads/", "") or "(detached)"
+        if not p.exists():
+            rows.append((0, p, branch, "", "missing on disk: `git worktree prune` cleans the record"))
+            continue
+        size = dir_stats(p)[0]
+        changes = len((git(p, "status", "--porcelain") or "").splitlines())
+        head = e.get("HEAD")
+        ahead = int(git(root, "rev-list", "--count", f"{base}..{head}") or 0) if base and head else 0
+        last = git(p, "log", "-1", "--format=%cr") or ""
+        if changes:
+            verdict = f"keep: {changes} uncommitted change(s)"
+        elif ahead:
+            verdict = f"keep: {ahead} commit(s) not in {base} (or squash-merged)"
+        elif e.get("locked"):
+            verdict = "keep: locked"
+        else:
+            verdict = "safe to remove"
+        rows.append((size, p, branch, last, verdict))
+    rows.sort(key=lambda r: -r[0])
+    print(f"{len(rows)} worktrees, {human(sum(r[0] for r in rows))} (compared with {base or 'no base branch'}). Nothing was changed.")
+    for size, p, branch, last, verdict in rows:
+        rel = os.path.relpath(p, root)
+        print(f"  {human(size):>10}  {rel}  [{branch}, last commit {last or '?'}]  {verdict}")
+    safe = [r for r in rows if r[4] == "safe to remove"]
+    if safe:
+        print(f"Safe to remove ({len(safe)}, {human(sum(r[0] for r in safe))}). Ask the user first, then run:")
+        for _, p, *_ in safe:
+            print(f'  git worktree remove "{p}"')
+
+
+def report(top):
+    """Read-only overview of every project folder under TOP: size, what's rebuildable, worktrees, last change."""
+    rows, now = [], time.time()
+    for d in sorted(p for p in top.iterdir() if p.is_dir() and not p.name.startswith(".")):
+        if not any(next(d.glob(pat + m), None) for m in MANIFESTS for pat in ("", "*/", "*/*/")):
+            continue  # not a project (a manifest at most two folders down)
+        total = rebuild = wt = files = newest = 0
+        for dp, dns, fns in os.walk(d):
+            keep = []
+            for n in dns:
+                sub = Path(dp) / n
+                r = None if n in VCS else (("wt",) if checkout_kind(sub) else regen(sub))
+                if r:
+                    s = dir_stats(sub)[0]
+                    total += s
+                    if r[0] == "wt":
+                        wt += s
+                    elif r[0] == "delete":
+                        rebuild += s
+                    continue
+                if n in VCS:
+                    total += dir_stats(sub)[0]
+                    continue
+                keep.append(n)
+            dns[:] = keep
+            for f in fns:
+                try:
+                    st = os.lstat(os.path.join(dp, f))
+                except OSError:
+                    continue
+                total += st.st_size
+                files += 1
+                newest = max(newest, st.st_mtime)
+        rows.append((rebuild + wt, d.name, total, rebuild, wt, int((now - newest) / 86400) if newest else None))
+    rows.sort(key=lambda r: -r[0])
+    print(f"{len(rows)} projects under {top}. Nothing was changed.")
+    print(f"  {'project':<32}{'size':>10}{'rebuildable':>13}{'worktrees':>11}  last change")
+    for _, name, total, rebuild, wt, age in rows:
+        print(f"  {name[:31]:<32}{human(total):>10}{human(rebuild):>13}{human(wt):>11}  {'?' if age is None else f'{age}d ago'}")
+    print(f"  {'total':<32}{human(sum(r[2] for r in rows)):>10}{human(sum(r[3] for r in rows)):>13}{human(sum(r[4] for r in rows)):>11}")
+    print("Rebuildable = deps, caches and build output mom deletes on its own (after `scan`). Worktrees: `mom.py worktrees PROJECT`.")
+
+
+def old_archives(root, days):
+    cutoff = time.time() - days * 86400
+    return [f for f in (root / STATE).glob("archive-*") if f.is_file() and f.stat().st_mtime < cutoff] if (root / STATE).is_dir() else []
+
+
+def prune(root, days):
+    old = old_archives(root, days)
+    size = sum(f.stat().st_size for f in old)
+    for f in old:
+        f.unlink()
+    print(f"Removed {len(old)} safety files older than {days} days from .mom/ ({human(size)}). "
+          f"Those runs can no longer be undone; newer ones still can.")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--version", action="version", version=f"Thanks Mom {__version__}")
-    ap.add_argument("cmd", choices=["scan", "apply", "undo", "map"])
+    ap.add_argument("cmd", choices=["scan", "apply", "undo", "map", "worktrees", "report", "prune"])
     ap.add_argument("root", nargs="?", default=".")
     ap.add_argument("zip", nargs="?")
     ap.add_argument("--keep", default="")
@@ -685,6 +811,7 @@ def main():
     ap.add_argument("--move", default="", help="approve suggested moves, e.g. --move 4-30")
     ap.add_argument("--archive-path", action="append", default=[], metavar="PATH",
                     help="box up a path the scan didn't flag (repeatable)")
+    ap.add_argument("--days", type=int, default=30, help="prune: remove safety zips older than this (default 30)")
     a = ap.parse_args()
     root = Path(a.root).resolve()
     if not root.is_dir():
@@ -695,6 +822,12 @@ def main():
         apply(root, ids(a.keep), ids(a.archive), ids(a.delete), a.archive_path, ids(a.move))
     elif a.cmd == "undo":
         undo(root, a.zip)
+    elif a.cmd == "worktrees":
+        worktrees(root)
+    elif a.cmd == "report":
+        report(root)
+    elif a.cmd == "prune":
+        prune(root, a.days)
     else:
         project_map(root)
 

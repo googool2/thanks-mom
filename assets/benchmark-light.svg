@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="288" viewBox="0 0 760 288" role="img" aria-label="Synthetic benchmark: before and after" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif'>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="248" viewBox="0 0 760 248" role="img" aria-label="Synthetic benchmark: before and after" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif'>
 <title>Synthetic benchmark: before and after</title>
 <text x="0.0" y="20.0" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="600">Synthetic benchmark: before and after</text>
 <text x="0.0" y="40.0" font-size="12" fill="#52514e" text-anchor="start" font-weight="400">A messy Python + Next.js project with real npm and pip installs and seven traps.</text>
@@ -28,17 +28,10 @@
 <circle cx="678.0" cy="182.0" r="5" fill="#898781" stroke="#ffffff" stroke-width="2"/>
 <circle cx="474.6" cy="182.0" r="5" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
 <text x="760.0" y="186.0" font-size="13" fill="#0b0b0b" text-anchor="end" font-weight="600">−48.6%</text>
-<text x="0.0" y="221.0" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="400">Recursive file listing (≈ tokens)</text>
-<text x="0.0" y="237.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">186.0K → 173</text>
-<line x1="260" y1="222" x2="678" y2="222" stroke="#e1e0d9" stroke-width="1"/>
-<line x1="260.4" y1="222" x2="678.0" y2="222" stroke="#2a78d6" stroke-width="2" stroke-opacity="0.35"/>
-<circle cx="678.0" cy="222.0" r="5" fill="#898781" stroke="#ffffff" stroke-width="2"/>
-<circle cx="260.4" cy="222.0" r="5" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
-<text x="760.0" y="226.0" font-size="13" fill="#0b0b0b" text-anchor="end" font-weight="600">−99.9%</text>
-<text x="260.0" y="262.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">0%</text>
-<text x="364.5" y="262.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">25%</text>
-<text x="469.0" y="262.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">50%</text>
-<text x="573.5" y="262.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">75%</text>
-<text x="678.0" y="262.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">100%</text>
-<text x="260.0" y="278.0" font-size="11" fill="#898781" text-anchor="start" font-weight="400">after, as % of before</text>
+<text x="260.0" y="222.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">0%</text>
+<text x="364.5" y="222.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">25%</text>
+<text x="469.0" y="222.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">50%</text>
+<text x="573.5" y="222.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">75%</text>
+<text x="678.0" y="222.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">100%</text>
+<text x="260.0" y="238.0" font-size="11" fill="#898781" text-anchor="start" font-weight="400">after, as % of before</text>
 </svg>

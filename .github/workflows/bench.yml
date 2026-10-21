@@ -24,8 +24,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: python thanks-mom/scripts/mom.py --version
+      - run: python skills/thanks-mom/scripts/mom.py --version
       - run: python bench/test_rules.py
+      - run: python bench/test_commands.py
       - run: python bench/bench.py
       - run: python bench/charts.py
       - if: always()

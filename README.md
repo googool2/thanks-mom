@@ -41,19 +41,32 @@ Say **"thanks mom"** inside a project and Claude:
 | 🧰 **Merges copy-paste scripts** | near-identical one-off scripts become one reusable tool in `tools/` |
 | 🗂️ **Tidies the root** | loose docs move into `docs/` in code projects |
 | 🗺️ **Leaves a map** | `PROJECT_MAP.md` plus a three-line pointer in `CLAUDE.md`, so an agent finds its way after a context reset |
+| 🌳 **Finds forgotten worktrees** | lists every git worktree with its size, unsaved changes and unmerged commits, and which ones are safe to remove |
+| 📊 **Surveys all your projects** | one read-only report of which projects are heavy and how much of each can be rebuilt |
 | ↩️ **Undoes everything** | `mom.py undo .` puts every boxed-up and moved file back, byte for byte |
 
 <p align="center"><b>Always say "thank you" to her.</b></p>
 
 ## Quick start
 
-```bash
-git clone https://github.com/googool2/thanks-mom
-cp -r thanks-mom/thanks-mom ~/.claude/skills/        # every project
-# or: cp -r thanks-mom/thanks-mom .claude/skills/    # just this one
+In Claude Code:
+
+```
+/plugin marketplace add googool2/thanks-mom
+/plugin install thanks-mom@thanks-mom
 ```
 
-Open Claude Code in a messy project and say **"thanks mom"** (or `/thanks-mom`). It needs Python 3.10 or newer, and nothing to install.
+Then open a messy project and say **"thanks mom"**. It needs Python 3.10 or newer, and nothing else to install.
+
+<details><summary>Without the plugin system</summary>
+
+```bash
+git clone https://github.com/googool2/thanks-mom
+cp -r thanks-mom/skills/thanks-mom ~/.claude/skills/        # every project
+# or: cp -r thanks-mom/skills/thanks-mom .claude/skills/    # just this one
+```
+
+</details>
 
 ## How a cleanup goes
 
@@ -123,7 +136,7 @@ A messy Python + Next.js project with real `npm` and `pip` installs and seven **
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/benchmark-dark.svg">
-  <img alt="Synthetic benchmark: project size, files and recursive file listing all down more than 99 percent, items at the root down about half, tests pass, 7 of 7 traps left alone" src="assets/benchmark-light.svg" width="760">
+  <img alt="Synthetic benchmark: project size and file count both down more than 99 percent, items at the root down about half, tests pass, 7 of 7 traps left alone" src="assets/benchmark-light.svg" width="760">
 </picture>
 
 Full report: [bench/RESULTS.md](bench/RESULTS.md).
@@ -152,15 +165,19 @@ Agents often write `read_pdf_tmp.py`, then `read_docx_tmp.py`, then `read_xlsx.p
 - Throwaway scripts go in .scratch/ (gitignored), never the project root.
 ```
 
-It's a pointer, not an `@import`, so it costs about 60 tokens per session. The whole skill costs about 1.4k tokens, and a scan summary about 400.
+It's a pointer, not an `@import`, so it costs about 60 tokens per session. The whole skill costs about 1.6k tokens, and a scan summary about 400.
 
 ## Without an agent
 
 ```bash
-python thanks-mom/scripts/mom.py scan .        # plan + summary, changes nothing
-python thanks-mom/scripts/mom.py apply . --archive 3,4 --keep 7 --move 10-36
-python thanks-mom/scripts/mom.py undo .        # put everything back
-python thanks-mom/scripts/mom.py map .         # folder tree for PROJECT_MAP.md
+MOM=skills/thanks-mom/scripts/mom.py
+python $MOM scan .                # plan + summary, changes nothing
+python $MOM apply . --archive 3,4 --keep 7 --move 10-36
+python $MOM undo .                # put everything back
+python $MOM map .                 # folder tree for PROJECT_MAP.md
+python $MOM worktrees .           # which git worktrees are safe to remove (read-only)
+python $MOM report ~/Projects     # every project: size, rebuildable, worktrees (read-only)
+python $MOM prune . --days 30     # delete safety zips older than 30 days
 ```
 
 Without answers, `apply` only does what the plan marked as safe. Ids accept ranges.
@@ -171,15 +188,9 @@ Releases are git tags, with notes in [CHANGELOG.md](CHANGELOG.md).
 - **Major versions** can change what gets removed, so read their notes first.
 - **Minor and patch versions** only add rules or fix bugs, and never loosen a safety rule.
 
-```bash
-python ~/.claude/skills/thanks-mom/scripts/mom.py --version
-cd thanks-mom && git pull && cp -r thanks-mom ~/.claude/skills/
-```
+Plugin installs update with `/plugin marketplace update thanks-mom`. To check what you have, run `mom.py --version`.
 
-**Next up:**
-- installing as a Claude Code plugin
-- a report on which `.claude/worktrees/*` are safe to remove
-- recognizing framework caches inside data folders
+**Next up:** recognizing framework caches inside data folders (Laravel `storage/framework/cache`, for example), so they stop being questions.
 
 Issues are welcome. Please include `mom.py --version` and the scan summary.
 

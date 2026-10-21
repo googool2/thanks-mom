@@ -10,7 +10,7 @@ OUT.json holds file names, so keep it private; only aggregate numbers belong in 
 import hashlib, json, os, shutil, stat, subprocess, sys, time, zipfile
 from pathlib import Path
 
-MOM = Path(__file__).resolve().parent.parent / "thanks-mom" / "scripts" / "mom.py"
+MOM = Path(__file__).resolve().parent.parent / "skills" / "thanks-mom" / "scripts" / "mom.py"
 
 
 def copy(src, dst):

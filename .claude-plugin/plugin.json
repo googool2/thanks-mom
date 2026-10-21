@@ -1,0 +1,11 @@
+{
+  "name": "thanks-mom",
+  "version": "1.2.0",
+  "description": "Cleans up messy project folders without losing anything: deletes provably rebuildable bloat, boxes up leftovers in a verified zip, asks about the rest, and leaves a project map.",
+  "author": {
+    "name": "googool2",
+    "url": "https://github.com/googool2"
+  },
+  "homepage": "https://github.com/googool2/thanks-mom",
+  "license": "MIT"
+}

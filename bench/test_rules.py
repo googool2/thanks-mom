@@ -6,7 +6,7 @@
 import importlib.util, sys
 from pathlib import Path
 
-path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent / "thanks-mom" / "scripts" / "mom.py"
+path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent / "skills" / "thanks-mom" / "scripts" / "mom.py"
 spec = importlib.util.spec_from_file_location("mom", path)
 mom = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mom)

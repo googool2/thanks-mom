@@ -6,7 +6,19 @@ Versions follow [Semantic Versioning](https://semver.org/):
 - **Minor** (1.1.0): new rules, new questions, new commands. Existing behavior stays as safe or gets safer.
 - **Patch** (1.0.1): bug fixes and wording.
 
-`python thanks-mom/scripts/mom.py --version` prints the installed version.
+`python skills/thanks-mom/scripts/mom.py --version` prints the installed version.
+
+## [1.2.0] - 2026-10-21
+
+New:
+- **Install as a Claude Code plugin:** `/plugin marketplace add googool2/thanks-mom`. The skill moved to `skills/thanks-mom/`.
+- **`mom.py worktrees ROOT`** lists every git worktree with its size, unsaved changes and commits not yet in the main branch, and prints `git worktree remove` commands for the safe ones only. It is read-only.
+- **`mom.py report DIR`** gives a read-only overview of every project under a folder: size, how much is rebuildable, how much is worktrees, and last change.
+- **`mom.py prune ROOT [--days 30]`** deletes old safety zips. The scan reminds you when old ones pile up.
+- `bench/agent_eval.py` measures, with headless Claude Code, whether a cleaned project with `PROJECT_MAP.md` helps an agent find code.
+
+Fixed:
+- The benchmark no longer reports "recursive file listing tokens". Claude Code's own search already skips gitignored folders, so that number overstated the gain.
 
 ## [1.1.1] - 2026-10-21
 

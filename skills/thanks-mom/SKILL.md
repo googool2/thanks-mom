@@ -1,6 +1,6 @@
 ---
 name: thanks-mom
-description: Tidies a messy project folder without breaking anything. Deletes regenerable bloat (node_modules, .venv, caches), boxes agent leftovers (tmp scripts, *_old files, logs, duplicates, screenshots) into a recoverable zip, asks the user about anything uncertain, merges repeated one-off scripts into one reusable tool, and writes PROJECT_MAP.md so agents can find files after a context reset. Use when the user says "thanks mom", "clean up / tidy / organize this project", "shrink this folder", "this repo is a mess", or asks for a project map.
+description: Tidies a messy project folder without breaking anything. Deletes regenerable bloat (node_modules, .venv, caches), boxes agent leftovers (tmp scripts, *_old files, logs, duplicates, screenshots) into a recoverable zip, asks the user about anything uncertain, merges repeated one-off scripts into one reusable tool, and writes PROJECT_MAP.md so agents can find files after a context reset. Use when the user says "thanks mom", "clean up / tidy / organize this project", "shrink this folder", "this repo is a mess", asks for a project map, asks which projects or worktrees take up space, or wants old git worktrees cleaned up.
 ---
 
 # Thanks Mom
@@ -17,7 +17,7 @@ Mom cleans your room but never throws out anything you might still need. Every s
 
 ## Steps
 1. **Baseline.** In a git repo run `git status --short`. If there are uncommitted changes, ask the user to commit first (offer to do it). Find the test or build command (package.json `scripts.test`, pytest, Makefile...), run it once and note pass or fail. If there are no tests, say so; step 6 is then skipped.
-2. **Scan.** `MOM scan .` and read the summary.
+2. **Scan.** `MOM scan .` and read the summary. If it lists git worktrees under "FYI", run `MOM worktrees .`. It shows each one's size, unsaved changes and unmerged commits, and prints `git worktree remove` commands for the safe ones. Show the user the safe ones and run those commands only with their OK. Never use `--force`.
 3. **Mom asks.** Ask about every `ASK` item with AskUserQuestion. Put up to 4 questions in one call, and fold same-kind items into one question ("these 5 scripts at the root?"). Options: **Keep it** / **Box it up** (archive, can come back) / **Throw it out** (delete). The summary already groups same-reason items into one line with an id range (`ids 4-30`): ask once per line, not per file. Also mention any delete or archive item over ~100 MB so nothing big disappears quietly.
    - Write the questions in English, even if the conversation is in another language, unless the user asks otherwise. People share this skill.
    - Tone: calm and considerate, like a sensible parent, not a cute one. No pet names, no baby talk, no jokes. Give the facts first (what it is, size, days since last change, whether anything references it), then one plain question: "`output/`: 129 KB, unchanged for 40 days, nothing references it. Still need it?"
@@ -38,4 +38,8 @@ Mom cleans your room but never throws out anything you might still need. Every s
    - Throwaway scripts go in .scratch/ (gitignored), never the project root.
    ```
    Use a pointer, not `@PROJECT_MAP.md`. That costs ~60 tokens per session instead of the whole map, and it survives context compaction because CLAUDE.md is reloaded.
-9. **Report** in one short table: size, file count and root items, before and after; what was deleted, boxed up and moved; where the zip is. End with: undo = `MOM undo .`, deps come back with the commands mom.py printed, and `.mom/` can be deleted once the user is happy.
+9. **Report** in one short table: size, file count and root items, before and after; what was deleted, boxed up and moved; where the zip is. End with: undo = `MOM undo .`, deps come back with the commands mom.py printed, and old safety zips can be removed with `MOM prune .` (older than 30 days by default) once the user is happy.
+
+## Other jobs
+- **"Which of my projects take up space?"** Run `MOM report <folder with projects>`. It's read-only and lists each project's size, how much is rebuildable, and worktrees. Offer to run the full cleanup on the biggest ones.
+- **"Clean up my worktrees."** Run `MOM worktrees .`, then follow step 2.

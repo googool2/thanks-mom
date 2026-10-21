@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "thanks-mom",
+  "description": "Thanks Mom: careful cleanup for messy agent projects.",
+  "owner": {
+    "name": "googool2",
+    "url": "https://github.com/googool2"
+  },
+  "plugins": [
+    {
+      "name": "thanks-mom",
+      "description": "Deletes provably rebuildable bloat, boxes up leftovers in a verified zip, asks about the rest, and leaves a project map.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

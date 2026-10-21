@@ -11,8 +11,8 @@ import hashlib, os, random, re, shutil, subprocess, sys, time, zipfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-MOM = HERE.parent / "thanks-mom" / "scripts" / "mom.py"
-SKILL = HERE.parent / "thanks-mom" / "SKILL.md"
+MOM = HERE.parent / "skills" / "thanks-mom" / "scripts" / "mom.py"
+SKILL = HERE.parent / "skills" / "thanks-mom" / "SKILL.md"
 TRAPS = ["src/shopbot/backup.py", "dist/widget.js", "web/static/logo.png", ".env", "data/products.csv",
          "storage/uploads/3f2b9c1e-8a4d-4f6e-9b2a-1c3d5e7f9a0b.txt", "storage/uploads/7a1d0e4c-2b3f-4c5d-8e9f-0a1b2c3d4e5f.txt"]
 REGEN = {"node_modules", ".venv", "__pycache__"}
@@ -153,11 +153,6 @@ def mom(*args):
     return r.stdout, time.perf_counter() - t
 
 
-def listing(root):
-    """What an agent gets from a naive recursive listing (`find .`, Glob **/*)."""
-    return "\n".join(str(p.relative_to(root)) for p in root.rglob("*") if ".mom" not in p.parts)
-
-
 def mb(n):
     return f"{n / 2**20:.1f} MB"
 
@@ -186,7 +181,6 @@ def main():
     size0, n0 = stats(work)
     root0 = len(os.listdir(work))
     map0, _ = mom("map", str(work))
-    list0 = listing(work)
 
     out_scan, t_scan = mom("scan", str(work))
     import json
@@ -203,7 +197,6 @@ def main():
     size1, n1 = stats(work)
     root1 = len(os.listdir(work))
     map1, _ = mom("map", str(work))
-    list1 = listing(work)
     mom_size = stats(work / ".mom", False)[0]
 
     # nothing lost: every original file is identical where it stayed, at its new path if moved, or inside the zip
@@ -260,7 +253,6 @@ def main():
         f"| Project size | {mb(size0)} | {mb(size1)} | **-{100 * (1 - size1 / size0):.1f}%** |",
         f"| Files | {n0:,} | {n1:,} | -{100 * (1 - n1 / n0):.1f}% |",
         f"| Items at the root | {root0} | {root1} | {root1 - root0:+d} |",
-        f"| Recursive file listing an agent might pull (≈ tokens) | {tok(list0):,} | {tok(list1):,} | -{100 * (1 - tok(list1) / tok(list0)):.1f}% |",
         f"| `mom.py map` output for PROJECT_MAP.md (≈ tokens) | {tok(map0):,} | {tok(map1):,} | -{100 * (1 - tok(map1) / tok(map0)):.1f}% |",
         "", f"Safety zip in `.mom/` (delete it when you're happy): {mb(mom_size)}.", "",
         "## Nothing lost", "",
@@ -287,7 +279,7 @@ def main():
     # numbers for bench/charts.py
     (HERE / "results.json").write_text(json.dumps({
         "size": [size0, size1], "files": [n0, n1], "root_items": [root0, root1],
-        "listing_tokens": [tok(list0), tok(list1)], "map_tokens": [tok(map0), tok(map1)],
+        "map_tokens": [tok(map0), tok(map1)],
         "tests_before": ok0, "tests_after": ok1, "lost": lost, "files_checked": len(h0),
         "restored": back, "traps": [traps_ok, len(TRAPS)],
         "categories": [{"name": c, "items": n, "size": s, "actions": sorted(a)} for c, (n, s, a) in cats.items()],
