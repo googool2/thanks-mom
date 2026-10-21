@@ -12,6 +12,7 @@
   <a href="https://github.com/googool2/thanks-mom/actions/workflows/bench.yml"><img alt="bench" src="https://github.com/googool2/thanks-mom/actions/workflows/bench.yml/badge.svg"></a>
   <a href="CHANGELOG.md"><img alt="version" src="https://img.shields.io/github/v/tag/googool2/thanks-mom?label=version"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue"></a>
+  <a href="#quick-start"><img alt="Claude Skill" src="https://img.shields.io/badge/Claude-Skill-D97757?logo=claude&logoColor=white"></a>
 </p>
 
 ---
