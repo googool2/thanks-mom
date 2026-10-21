@@ -1,0 +1,73 @@
+{
+ "note": "Copies of 16 real projects, cleaned with no questions answered. Totals only; verdicts are a manual review of every automatic decision.",
+ "projects": 16,
+ "before": {
+  "bytes": 22257219707,
+  "files": 362623
+ },
+ "after": {
+  "bytes": 17172827225,
+  "files": 101866
+ },
+ "verdicts": {
+  "1.0.0": {
+   "auto": 8446,
+   "correct": 137,
+   "debatable": 7337,
+   "wrong": 972,
+   "asks": 637
+  },
+  "1.1.0": {
+   "auto": 89,
+   "correct": 89,
+   "debatable": 0,
+   "wrong": 0,
+   "asks": 347
+  }
+ },
+ "done_automatically": {
+  "Dependencies (node_modules, vendor/)": {
+   "items": 11,
+   "bytes": 2564264191
+  },
+  "Caches (.next, __pycache__, .gradle)": {
+   "items": 14,
+   "bytes": 1534157882
+  },
+  "Build output (dist/, build/)": {
+   "items": 13,
+   "bytes": 985121015
+  },
+  "Logs, temp and old files (boxed up)": {
+   "items": 20,
+   "bytes": 1380584
+  },
+  "Loose docs moved into docs/": {
+   "items": 31,
+   "bytes": 22103721
+  }
+ },
+ "left_to_ask": {
+  "Headless browser profiles": 95,
+  "Files inside data folders": 63,
+  "Duplicates of 1 MB or more": 67,
+  "Big files": 33,
+  "Many loose docs at once": 27,
+  "Leftover-looking folders": 17,
+  "Old or backup names that something uses": 14,
+  "Loose images at the root": 12,
+  "Names like a copy": 11,
+  "Scripts that look one-off": 5,
+  "node_modules without a lockfile": 2,
+  "Logs that something uses": 1
+ },
+ "mechanical": {
+  "runs": 32,
+  "files_checked": 725245,
+  "lost": 0,
+  "not_restored": 0,
+  "exposed": 0,
+  "git_checks": 15,
+  "git_identical": 15
+ }
+}

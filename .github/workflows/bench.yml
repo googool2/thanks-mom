@@ -1,0 +1,35 @@
+# Runs the full benchmark (real npm + pip installs, cleanup, tests, undo, traps) on every OS.
+# bench.py exits non-zero if anything is lost, a trap is touched, or the project's tests break.
+name: bench
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  bench:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.10", "3.14"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: python thanks-mom/scripts/mom.py --version
+      - run: python bench/test_rules.py
+      - run: python bench/bench.py
+      - run: python bench/charts.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-${{ matrix.os }}-py${{ matrix.python }}
+          path: bench/RESULTS.md

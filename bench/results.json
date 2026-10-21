@@ -1,0 +1,130 @@
+{
+ "size": [
+  336508606,
+  885418
+ ],
+ "files": [
+  11214,
+  29
+ ],
+ "root_items": [
+  37,
+  19
+ ],
+ "listing_tokens": [
+  185956,
+  173
+ ],
+ "map_tokens": [
+  335,
+  214
+ ],
+ "tests_before": true,
+ "tests_after": true,
+ "lost": 0,
+ "files_checked": 47,
+ "restored": 45,
+ "traps": [
+  7,
+  7
+ ],
+ "categories": [
+  {
+   "name": ".venv (package list saved first)",
+   "items": 1,
+   "size": 15728779,
+   "actions": [
+    "delete"
+   ]
+  },
+  {
+   "name": "node_modules (npm, lockfile present)",
+   "items": 1,
+   "size": 316736809,
+   "actions": [
+    "delete"
+   ]
+  },
+  {
+   "name": "leftover folders (`tmp/`, `output/`)",
+   "items": 2,
+   "size": 141434,
+   "actions": [
+    "archive (asked)"
+   ]
+  },
+  {
+   "name": "caches (`__pycache__`)",
+   "items": 2,
+   "size": 3492,
+   "actions": [
+    "delete"
+   ]
+  },
+  {
+   "name": "OS junk (`.DS_Store`, `Thumbs.db`)",
+   "items": 2,
+   "size": 26148,
+   "actions": [
+    "delete"
+   ]
+  },
+  {
+   "name": "loose docs -> `docs/`",
+   "items": 4,
+   "size": 3065,
+   "actions": [
+    "move"
+   ]
+  },
+  {
+   "name": "throwaway names (`*_old`, `*_backup`)",
+   "items": 5,
+   "size": 1384,
+   "actions": [
+    "archive",
+    "ask"
+   ]
+  },
+  {
+   "name": "one-off scripts at root",
+   "items": 4,
+   "size": 676,
+   "actions": [
+    "archive (asked)"
+   ]
+  },
+  {
+   "name": "inside a data folder",
+   "items": 1,
+   "size": 204887,
+   "actions": [
+    "archive (asked)"
+   ]
+  },
+  {
+   "name": "screenshots at root",
+   "items": 2,
+   "size": 800016,
+   "actions": [
+    "archive (asked)"
+   ]
+  },
+  {
+   "name": "logs / temp files",
+   "items": 2,
+   "size": 1979858,
+   "actions": [
+    "archive"
+   ]
+  },
+  {
+   "name": "similar scripts (kept, flagged)",
+   "items": 1,
+   "size": 424,
+   "actions": [
+    "keep"
+   ]
+  }
+ ]
+}
