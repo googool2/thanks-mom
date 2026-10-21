@@ -86,6 +86,8 @@ def stats(tiles, t, title):
     body = []
     for n, (value, label, sub) in enumerate(tiles):
         x = n * (w + gap)
+        for s, size in ((value, 28), (label, 12), (sub, 11)):  # ~0.5em per character in system-ui
+            assert len(s) * size * 0.5 <= w - 32, f"stat tile text too long for its box: {s!r}"
         body.append(f'<rect x="{x + 0.5:.1f}" y="0.5" width="{w - 1:.1f}" height="{h - 1}" rx="10" '
                     f'fill="none" stroke="{t["line"]}"/>')
         body.append(text(x + 16, 42, value, t, 28, "ink", weight=600))
@@ -188,7 +190,7 @@ def main():
         charts = {
             "stats": stats([
                 (f"−{best['size_reduction_pct']['max']:.0f}%", "smaller, at best", best["type"].lower()),
-                (f"−{agent_cut:.0f}%", "tokens for an agent to find code", "after cleanup, measured"),
+                (f"−{agent_cut:.0f}%", "agent tokens to find code", "after cleanup, measured"),
                 (f"{rw['mechanical']['lost']}", "files lost", f"{rw['mechanical']['files_checked']:,} checked"),
                 (f"{wrong0:.1f}% → {100 * v1['wrong'] / max(v1['auto'], 1):.0f}%", "wrong automatic decisions", "v1.0 → v1.1, reviewed by hand"),
             ], t, "Thanks Mom in numbers"),

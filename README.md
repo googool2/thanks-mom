@@ -2,7 +2,7 @@
   <img src="assets/thanks-mom.jpg" alt="Thanks Mom: a mom tidying a messy developer bedroom, boxing node_modules leftovers into archive.zip and filing src, tests, docs and tools on labeled shelves" width="760">
 </p>
 
-<h1 align="center"><img src="assets/icon.png" alt="" width="44" align="center">&nbsp;Thanks Mom</h1>
+<h1 align="center"><img src="assets/icon.png" alt="" width="44" align="absmiddle">&nbsp;Thanks Mom</h1>
 
 <p align="center">
   <b>A Claude Code skill that cleans up messy project folders,<br>and never throws out anything you still need.</b>
@@ -12,7 +12,7 @@
   <a href="https://github.com/googool2/thanks-mom/actions/workflows/bench.yml"><img alt="bench" src="https://github.com/googool2/thanks-mom/actions/workflows/bench.yml/badge.svg"></a>
   <a href="CHANGELOG.md"><img alt="version" src="https://img.shields.io/github/v/tag/googool2/thanks-mom?label=version"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue"></a>
-  <a href="#quick-start"><img alt="Claude Skill" src="https://img.shields.io/badge/Claude-Skill-D97757?logo=claude&logoColor=white"></a>
+  <a href="#quick-start"><img alt="Claude Skill" src="https://img.shields.io/badge/Claude-Skill-D97757"></a>
 </p>
 
 ---
