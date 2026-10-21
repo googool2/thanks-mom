@@ -26,7 +26,7 @@ A clean room isn't an empty room. It's a room where you can find everything.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/stats-dark.svg">
-  <img alt="16 real projects tested, 0 files lost, wrong automatic decisions 972 to 0 from version 1.0 to 1.1, 4.7 GB freed automatically" src="assets/stats-light.svg" width="760">
+  <img alt="Up to 96 percent smaller, 72 percent fewer files across tested projects, 0 files lost, wrong automatic decisions from 11.5 percent to 0 percent between v1.0 and v1.1" src="assets/stats-light.svg" width="760">
 </picture>
 
 ## What she does
@@ -78,40 +78,48 @@ Open Claude Code in a messy project and say **"thanks mom"** (or `/thanks-mom`).
 3. **Apply.** `mom.py apply .` writes the zip, verifies it, and only then removes anything.
 4. **Map.** Claude writes `PROJECT_MAP.md` and a short pointer in `CLAUDE.md`, then reports what changed and how to undo it.
 
-## Results
+## Benchmarks
 
-### On real projects
-
-Mom was run on copies of **16 real projects** of different kinds: web and mobile apps, monorepos, PHP and Python code, research folders and plain document folders. Each copy was deleted afterwards. Every automatic decision was **reviewed by hand**. That means each delete, box-up and move made without asking.
+### Results by project type
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/realworld-dark.svg">
-  <img alt="On 16 real projects with no questions answered: 2.4 GB of dependencies, 1.4 GB of caches and 0.9 GB of build output freed automatically, and 347 questions left for the user, most of them about browser profiles, duplicates and data folders" src="assets/realworld-light.svg" width="760">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/by-type-dark.svg">
+  <img alt="Size reduction by project type: mobile apps and JavaScript web apps around 86 percent, full-stack monorepos 41 percent, PHP apps 26 percent, Python projects and document folders 0 percent" src="assets/by-type-light.svg" width="760">
 </picture>
 
-The first version did not pass this test cleanly, and the fixes went into 1.1:
+| Project type | Size | Files | Removed automatically |
+|---|---:|---:|---|
+| Mobile apps | −77% to −96% | −99% | Gradle `build/`, `node_modules`, `dist/` |
+| JavaScript web apps | −50% to −95% | −88% to −99% | `node_modules`, `dist/`, `.next` |
+| Full-stack monorepos | up to −81% | up to −97% | `node_modules` and `dist/` in every workspace |
+| PHP apps | −26% | −74% | Composer `vendor/`, logs |
+| Python projects | 0% | ~0% | `__pycache__`, logs. Their size is data, which mom only asks about |
+| Document folders | 0% | up to −1% | Nothing rebuildable. Mom only asks |
 
-| | 1.0 | 1.1 |
+These are **automatic actions only**: what mom does before you answer a single question. Anything you approve when she asks, like old builds, leftover folders or big archives, comes on top. A typical project leaves 4.5 questions (median).
+
+<sub>Measured on copies of real-world projects across these six types: 362,623 files, 20.7 GB in total. The copies were deleted afterwards, and no project names or contents are published. Ranges are min to max across projects of a type. Raw totals: [bench/realworld.json](bench/realworld.json).</sub>
+
+### Accuracy and safety
+
+Every automatic decision was reviewed by hand. That covers each delete, box-up and move made without asking.
+
+| | v1.0 | v1.1 |
 |---|---:|---:|
-| Automatic decisions | 8,446 | 89 |
-| Wrong (would break something until `undo`) | 972 | **0** |
-| Harmless but debatable | 7,337 | 0 |
-| Questions left for you | 637 | 347 |
+| Wrong automatic decisions (would break something until `undo`) | 11.5% | **0%** |
+| Debatable automatic decisions | 86.9% | 0% |
+| Files lost | 0 | 0 |
+| Files restored byte for byte by `undo` | 100% | 100% |
+| `git status` identical after `undo` | ✅ | ✅ |
+| Questions per project (median) | 11.5 | 4.5 |
 
-Most of 1.0's mistakes came from one bad assumption: that identical files are junk. In real projects they're often deliberate. Examples are experiment outputs, app resources and files inside a packaged app. In 1.1, duplicates are only ever a question, and folders that can't be proven rebuildable are not looked into. The full list is in the [CHANGELOG](CHANGELOG.md).
+v1.0 never lost a file, but it trusted one bad rule: identical files are junk. In real projects they're often deliberate. Examples are experiment outputs, app resources and files inside a packaged app. v1.1 treats duplicates as a question and stays out of folders it can't prove are rebuildable. The details are in the [CHANGELOG](CHANGELOG.md).
 
-| Mechanical checks (both versions, every project) | Result |
-|---|---|
-| Original files accounted for after cleanup: in place, moved, or in the zip | ✅ 725,245 checked, 0 lost |
-| Files back byte-for-byte after `undo` (rebuildable dependencies excluded) | ✅ all |
-| `git status` identical after `undo` | ✅ 15 of 15 |
-| Ignored files made visible to git by a move | ✅ 0 |
+Run the same test on your own projects with `python bench/realworld.py WORKDIR results.json PROJECT_DIR...`. It works on copies and deletes them when done.
 
-You can run the same test on your own projects: `python bench/realworld.py WORKDIR results.json PROJECT_DIR...`. It works on copies and deletes them when done.
+### Synthetic benchmark (CI)
 
-### Synthetic benchmark
-
-A messy Python + Next.js project with real `npm` and `pip` installs, plus seven **traps** that look like junk but aren't (a module named `backup.py`, a hand-made `dist/`, `.env`, uploads a database points to, ...). Every question gets the most aggressive answer. CI runs it on Linux, macOS and Windows on every push.
+A messy Python + Next.js project with real `npm` and `pip` installs and seven **traps** that look like junk but aren't. Examples are a module named `backup.py`, a hand-made `dist/`, `.env`, and uploads a database points to. Every question gets the most aggressive answer. It runs on Linux, macOS and Windows on every push.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/benchmark-dark.svg">
@@ -179,7 +187,7 @@ Issues are welcome. Please include `mom.py --version` and the scan summary.
 
 - The reference check is text search. Paths built at runtime (`"data_" + kind + ".csv"`) can be missed. That's why uncertain files are asked about or boxed up, never deleted.
 - Rebuilding deleted dependencies (`npm ci`, `pip install`, `composer install`) needs network.
-- The real-project test covered one person's projects on Windows, reviewed by the agent that wrote the tool. Your mileage depends on how messy your room is.
+- The real-world benchmark used one developer's projects on Windows, and the agent that wrote the tool reviewed it. Your mileage depends on how messy your room is.
 
 ---
 

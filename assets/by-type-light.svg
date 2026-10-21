@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="392" viewBox="0 0 760 392" role="img" aria-label="Size reduction by project type" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif'>
+<title>Size reduction by project type</title>
+<text x="0.0" y="20.0" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="600">Size reduction by project type</text>
+<text x="0.0" y="40.0" font-size="12" fill="#52514e" text-anchor="start" font-weight="400">Automatic actions only, before answering a single question. Bar: range across projects of</text>
+<text x="0.0" y="57.0" font-size="12" fill="#52514e" text-anchor="start" font-weight="400">that type. Dot: median. Right: median size and file reduction.</text>
+<text x="0.0" y="105.0" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="400">Mobile apps</text>
+<text x="0.0" y="121.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Gradle build/, node_modules, dist/</text>
+<line x1="270" y1="106" x2="650" y2="106" stroke="#e1e0d9" stroke-width="1"/>
+<rect x="563.7" y="102" width="70.3" height="8" rx="4" fill="#2a78d6" fill-opacity="0.3"/>
+<circle cx="598.7" cy="106.0" r="6" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<text x="760.0" y="105.0" font-size="13" fill="#0b0b0b" text-anchor="end" font-weight="600">−86%</text>
+<text x="760.0" y="121.0" font-size="11" fill="#898781" text-anchor="end" font-weight="400">files −99%</text>
+<text x="0.0" y="149.0" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="400">JavaScript web apps</text>
+<text x="0.0" y="165.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">node_modules, dist/, .next</text>
+<line x1="270" y1="150" x2="650" y2="150" stroke="#e1e0d9" stroke-width="1"/>
+<rect x="460.4" y="146" width="170.2" height="8" rx="4" fill="#2a78d6" fill-opacity="0.3"/>
+<circle cx="595.3" cy="150.0" r="6" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<text x="760.0" y="149.0" font-size="13" fill="#0b0b0b" text-anchor="end" font-weight="600">−86%</text>
+<text x="760.0" y="165.0" font-size="11" fill="#898781" text-anchor="end" font-weight="400">files −99%</text>
+<text x="0.0" y="193.0" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="400">Full-stack monorepos</text>
+<text x="0.0" y="209.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">node_modules, dist/ in every workspace</text>
+<line x1="270" y1="194" x2="650" y2="194" stroke="#e1e0d9" stroke-width="1"/>
+<rect x="270.0" y="190" width="309.3" height="8" rx="4" fill="#2a78d6" fill-opacity="0.3"/>
+<circle cx="425.8" cy="194.0" r="6" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<text x="760.0" y="193.0" font-size="13" fill="#0b0b0b" text-anchor="end" font-weight="600">−41%</text>
+<text x="760.0" y="209.0" font-size="11" fill="#898781" text-anchor="end" font-weight="400">files −80%</text>
+<text x="0.0" y="237.0" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="400">PHP apps</text>
+<text x="0.0" y="253.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Composer vendor/, logs</text>
+<line x1="270" y1="238" x2="650" y2="238" stroke="#e1e0d9" stroke-width="1"/>
+<circle cx="368.8" cy="238.0" r="6" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<text x="760.0" y="237.0" font-size="13" fill="#0b0b0b" text-anchor="end" font-weight="600">−26%</text>
+<text x="760.0" y="253.0" font-size="11" fill="#898781" text-anchor="end" font-weight="400">files −74%</text>
+<text x="0.0" y="281.0" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="400">Python projects</text>
+<text x="0.0" y="297.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">__pycache__ and logs; data is kept</text>
+<line x1="270" y1="282" x2="650" y2="282" stroke="#e1e0d9" stroke-width="1"/>
+<circle cx="270.0" cy="282.0" r="6" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<text x="760.0" y="281.0" font-size="13" fill="#0b0b0b" text-anchor="end" font-weight="600">0%</text>
+<text x="760.0" y="297.0" font-size="11" fill="#898781" text-anchor="end" font-weight="400">files 0%</text>
+<text x="0.0" y="325.0" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="400">Document folders</text>
+<text x="0.0" y="341.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">nothing rebuildable; asks only</text>
+<line x1="270" y1="326" x2="650" y2="326" stroke="#e1e0d9" stroke-width="1"/>
+<circle cx="270.0" cy="326.0" r="6" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<text x="760.0" y="325.0" font-size="13" fill="#0b0b0b" text-anchor="end" font-weight="600">0%</text>
+<text x="760.0" y="341.0" font-size="11" fill="#898781" text-anchor="end" font-weight="400">files 0%</text>
+<text x="270.0" y="368.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">0%</text>
+<text x="365.0" y="368.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">−25%</text>
+<text x="460.0" y="368.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">−50%</text>
+<text x="555.0" y="368.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">−75%</text>
+<text x="650.0" y="368.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">−100%</text>
+<text x="270.0" y="384.0" font-size="11" fill="#898781" text-anchor="start" font-weight="400">size reduction</text>
+</svg>

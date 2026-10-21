@@ -1,6 +1,5 @@
 {
- "note": "Copies of 16 real projects, cleaned with no questions answered. Totals only; verdicts are a manual review of every automatic decision.",
- "projects": 16,
+ "note": "Copies of real-world projects, cleaned with no questions answered (automatic actions only). Totals and per-type ranges only. Verdicts are a manual review of every automatic decision.",
  "before": {
   "bytes": 22257219707,
   "files": 362623
@@ -69,5 +68,98 @@
   "exposed": 0,
   "git_checks": 15,
   "git_identical": 15
- }
+ },
+ "by_type": [
+  {
+   "type": "Mobile apps",
+   "projects": 2,
+   "what_goes": "Gradle build/, node_modules, dist/",
+   "size_reduction_pct": {
+    "min": 77.3,
+    "median": 86.5,
+    "max": 95.8
+   },
+   "file_reduction_pct": {
+    "min": 98.8,
+    "median": 98.9,
+    "max": 99.0
+   }
+  },
+  {
+   "type": "JavaScript web apps",
+   "projects": 3,
+   "what_goes": "node_modules, dist/, .next",
+   "size_reduction_pct": {
+    "min": 50.1,
+    "median": 85.6,
+    "max": 94.9
+   },
+   "file_reduction_pct": {
+    "min": 88.5,
+    "median": 98.6,
+    "max": 98.7
+   }
+  },
+  {
+   "type": "Full-stack monorepos",
+   "projects": 4,
+   "what_goes": "node_modules, dist/ in every workspace",
+   "size_reduction_pct": {
+    "min": 0.0,
+    "median": 41.0,
+    "max": 81.4
+   },
+   "file_reduction_pct": {
+    "min": 0.0,
+    "median": 79.8,
+    "max": 96.8
+   }
+  },
+  {
+   "type": "PHP apps",
+   "projects": 1,
+   "what_goes": "Composer vendor/, logs",
+   "size_reduction_pct": {
+    "min": 26.0,
+    "median": 26.0,
+    "max": 26.0
+   },
+   "file_reduction_pct": {
+    "min": 74.4,
+    "median": 74.4,
+    "max": 74.4
+   }
+  },
+  {
+   "type": "Python projects",
+   "projects": 3,
+   "what_goes": "__pycache__ and logs; data is kept",
+   "size_reduction_pct": {
+    "min": 0.0,
+    "median": 0.0,
+    "max": 0.0
+   },
+   "file_reduction_pct": {
+    "min": 0.0,
+    "median": 0.2,
+    "max": 0.5
+   }
+  },
+  {
+   "type": "Document folders",
+   "projects": 3,
+   "what_goes": "nothing rebuildable; asks only",
+   "size_reduction_pct": {
+    "min": 0.0,
+    "median": 0.0,
+    "max": 0.0
+   },
+   "file_reduction_pct": {
+    "min": 0.0,
+    "median": 0.0,
+    "max": 1.1
+   }
+  }
+ ],
+ "questions_per_project_median": 4.5
 }

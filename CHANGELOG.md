@@ -15,7 +15,7 @@ Versions follow [Semantic Versioning](https://semver.org/):
 
 ## [1.1.0] - 2026-10-21
 
-Found by running 1.0.0 on copies of 16 real projects and reviewing every automatic decision by hand.
+Found by running 1.0.0 on copies of real-world projects (six project types) and reviewing every automatic decision by hand.
 1.0.0 lost nothing (every file was accounted for and `undo` restored all of them), but 972 of its 8,446 automatic decisions were wrong.
 
 Safer:

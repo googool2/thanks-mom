@@ -97,46 +97,32 @@ def stats(tiles, t, title):
     return svg(t, h, title, body)
 
 
-def hbars(rows, color, fmt, t, x0=250, row_h=30, thick=16):
-    """Single-series horizontal bars from one baseline, value at the tip."""
-    body, top = [], 0
-    top_val = max(v for _, v in rows) or 1
-    span = W - x0 - 80
-    for i, (label, v) in enumerate(rows):
-        cy = top + i * row_h + row_h / 2
-        body.append(text(0, cy + 4, label, t, 12, "ink"))
-        w = max(span * v / top_val, 2)
-        body.append(bar(x0, cy - thick / 2, w, thick, color))
-        body.append(text(x0 + w + 8, cy + 4, fmt(v), t, 12, "ink2"))
-    body.append(f'<line x1="{x0}" y1="{top}" x2="{x0}" y2="{top + row_h * len(rows)}" stroke="{t["grid"]}" stroke-width="1"/>')
-    return body, row_h * len(rows)
-
-
-def shifted(parts, dy):
-    return [f'<g transform="translate(0,{dy:.1f})">'] + parts + ["</g>"]
-
-
-def realworld_chart(rw, t):
-    title = f"What mom did on {rw['projects']} real projects"
-    b, a = rw["before"], rw["after"]
-    body, y = header(title, [
-        f"Copies of real projects, cleaned with no questions answered. {size_fmt(b['bytes'])} → {size_fmt(a['bytes'])}, "
-        f"{b['files']:,} → {a['files']:,} files."], t)
-    done = [(name, v["bytes"]) for name, v in rw["done_automatically"].items() if v["bytes"] and "moved" not in name]
-    moved = next((v["items"] for name, v in rw["done_automatically"].items() if "moved" in name), 0)
-    y += 10
-    body.append(text(0, y + 4, "Done automatically: space freed", t, 13, "ink", weight=600))
-    parts, h = hbars(sorted(done, key=lambda r: -r[1]), t["series"][0], size_fmt, t)
-    body += shifted(parts, y + 14)
-    y += 14 + h + 6
-    body.append(text(0, y + 4, f"Plus {moved} loose docs moved into docs/. Every automatic decision was checked by hand.", t, 11, "muted"))
-    y += 36
-    asked = sorted(rw["left_to_ask"].items(), key=lambda r: -r[1])
-    body.append(text(0, y + 4, f"Left for you to decide: {sum(v for _, v in asked):,} questions, grouped by kind", t, 13, "ink", weight=600))
-    parts, h = hbars(asked, t["series"][1], count_fmt, t, row_h=26, thick=14)
-    body += shifted(parts, y + 14)
-    y += 14 + h + 8
-    return svg(t, y, title, body)
+def type_chart(rw, t):
+    """Range per project type (bar = min..max across projects, dot = median), all on one 0-100% axis."""
+    title = "Size reduction by project type"
+    acc = t["series"][0]
+    body, y = header(title, ["Automatic actions only, before answering a single question. Bar: range across projects of",
+                             "that type. Dot: median. Right: median size and file reduction."], t)
+    X0, X1 = 270, W - 110
+    y += 12
+    xs = lambda v: X0 + (X1 - X0) * v / 100
+    for row in rw["by_type"]:
+        sz, fl = row["size_reduction_pct"], row["file_reduction_pct"]
+        cy = y + 14
+        body.append(text(0, cy - 1, row["type"], t, 13, "ink"))
+        body.append(text(0, cy + 15, row["what_goes"], t, 11, "ink2"))
+        body.append(f'<line x1="{X0}" y1="{cy}" x2="{X1}" y2="{cy}" stroke="{t["grid"]}" stroke-width="1"/>')
+        if sz["max"] - sz["min"] >= 0.5:
+            body.append(f'<rect x="{xs(sz["min"]):.1f}" y="{cy - 4}" width="{xs(sz["max"]) - xs(sz["min"]):.1f}" height="8" rx="4" '
+                        f'fill="{acc}" fill-opacity="0.3"/>')
+        body.append(dot(xs(sz["median"]), cy, acc, t, 6))
+        body.append(text(W, cy - 1, f"−{sz['median']:.0f}%" if sz["median"] >= 0.5 else "0%", t, 13, "ink", "end", 600))
+        body.append(text(W, cy + 15, f"files −{fl['median']:.0f}%" if fl["median"] >= 0.5 else "files 0%", t, 11, "muted", "end"))
+        y += 44
+    for v in (0, 25, 50, 75, 100):
+        body.append(text(xs(v), y + 12, f"−{v}%" if v else "0%", t, 11, "muted", "middle"))
+    body.append(text(X0, y + 28, "size reduction", t, 11, "muted"))
+    return svg(t, y + 36, title, body)
 
 
 def dumbbell(title, sub, rows, t):
@@ -167,19 +153,21 @@ def main():
     r = json.loads((HERE / "results.json").read_text(encoding="utf-8"))
     rw = json.loads((HERE / "realworld.json").read_text(encoding="utf-8"))
     v0, v1 = rw["verdicts"]["1.0.0"], rw["verdicts"]["1.1.0"]
-    freed = rw["before"]["bytes"] - rw["after"]["bytes"]
+    best = max(rw["by_type"], key=lambda r: r["size_reduction_pct"]["max"])
+    files_cut = 100 * (1 - rw["after"]["files"] / rw["before"]["files"])
+    wrong0 = 100 * v0["wrong"] / v0["auto"]
     OUT.mkdir(exist_ok=True)
     for old in OUT.glob("*.svg"):
         old.unlink()
     for mode, t in THEMES.items():
         charts = {
             "stats": stats([
-                (f"{rw['projects']}", "real projects tested", "on copies, then deleted"),
+                (f"−{best['size_reduction_pct']['max']:.0f}%", "smaller, at best", best["type"].lower()),
+                (f"−{files_cut:.0f}%", "files across all tested projects", f"{rw['before']['files']:,} → {rw['after']['files']:,}"),
                 (f"{rw['mechanical']['lost']}", "files lost", f"{rw['mechanical']['files_checked']:,} checked"),
-                (f"{v0['wrong']:,} → {v1['wrong']}", "wrong automatic decisions", "version 1.0 → 1.1"),
-                (size_fmt(freed), "freed automatically", "before any question"),
+                (f"{wrong0:.1f}% → {100 * v1['wrong'] / max(v1['auto'], 1):.0f}%", "wrong automatic decisions", "v1.0 → v1.1, reviewed by hand"),
             ], t, "Thanks Mom in numbers"),
-            "realworld": realworld_chart(rw, t),
+            "by-type": type_chart(rw, t),
             "benchmark": dumbbell(
                 "Synthetic benchmark: before and after",
                 ["A messy Python + Next.js project with real npm and pip installs and seven traps.",
