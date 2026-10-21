@@ -2,7 +2,7 @@
   <img src="assets/thanks-mom.jpg" alt="Thanks Mom: a mom tidying a messy developer bedroom, boxing node_modules leftovers into archive.zip and filing src, tests, docs and tools on labeled shelves" width="760">
 </p>
 
-<h1 align="center">Thanks Mom</h1>
+<h1 align="center"><img src="assets/icon.png" alt="" width="44" align="center">&nbsp;Thanks Mom</h1>
 
 <p align="center">
   <b>A Claude Code skill that cleans up messy project folders,<br>and never throws out anything you still need.</b>
