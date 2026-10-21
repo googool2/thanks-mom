@@ -183,9 +183,7 @@ def main():
     wrong0 = 100 * v0["wrong"] / v0["auto"]
     ae = json.loads((HERE / "agent-eval.json").read_text(encoding="utf-8"))["summary"]
     agent_cut = 100 * (1 - ae["clean"]["mean_tokens"] / ae["messy"]["mean_tokens"])
-    OUT.mkdir(exist_ok=True)
-    for old in OUT.glob("*.svg"):
-        old.unlink()
+    out = {}  # build every chart first; only then replace the files, so an error never leaves assets/ empty
     for mode, t in THEMES.items():
         charts = {
             "stats": stats([
@@ -204,8 +202,13 @@ def main():
                 [("Project size", *r["size"], size_fmt), ("Files", *r["files"], count_fmt),
                  ("Items at the root", *r["root_items"], count_fmt)], t),
         }
-        for name, content in charts.items():
-            (OUT / f"{name}-{mode}.svg").write_text(content, encoding="utf-8")
+        out.update({f"{name}-{mode}.svg": content for name, content in charts.items()})
+    OUT.mkdir(exist_ok=True)
+    for old in OUT.glob("*.svg"):
+        if old.name not in out:
+            old.unlink()
+    for name, content in out.items():
+        (OUT / name).write_text(content, encoding="utf-8")
     print("wrote", ", ".join(sorted(p.name for p in OUT.glob("*.svg"))))
 
 
