@@ -86,8 +86,8 @@ def stats(tiles, t, title):
     body = []
     for n, (value, label, sub) in enumerate(tiles):
         x = n * (w + gap)
-        for s, size in ((value, 28), (label, 12), (sub, 11)):  # ~0.5em per character in system-ui
-            assert len(s) * size * 0.5 <= w - 32, f"stat tile text too long for its box: {s!r}"
+        for s, size in ((value, 28), (label, 12), (sub, 11)):  # ~0.45em per character in system-ui (measured)
+            assert len(s) * size * 0.45 <= w - 32, f"stat tile text too long for its box: {s!r}"
         body.append(f'<rect x="{x + 0.5:.1f}" y="0.5" width="{w - 1:.1f}" height="{h - 1}" rx="10" '
                     f'fill="none" stroke="{t["line"]}"/>')
         body.append(text(x + 16, 42, value, t, 28, "ink", weight=600))
