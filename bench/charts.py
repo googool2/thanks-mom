@@ -122,6 +122,33 @@ def type_chart(rw, t):
     return svg(t, y + 36, title, body)
 
 
+def agent_chart(ae, t):
+    """Mean tokens per state of the same project, single series, value and context at the bar tip."""
+    title = "Does a tidy project help an agent?"
+    rows = [("messy", "Before cleanup", "old copies, backup/, loose plans"),
+            ("clean", "After cleanup", "no map"),
+            ("map_first", "After cleanup + map", "CLAUDE.md: read the map first"),
+            ("mapped", "After cleanup + map", "CLAUDE.md: read the map when stuck")]
+    sm = ae["summary"]
+    body, y = header(title, [f"Claude Code ({ae['model']}) answering {ae['questions']} \"which file does X?\" questions on a ~40-module project,",
+                             f"{ae['reps']} runs each. All {sum(v['runs'] for v in sm.values())} answers were correct. Bar: mean tokens per question."], t)
+    X0, span, row_h = 270, W - 270 - 200, 44
+    top = max(sm[k]["mean_tokens"] for k, *_ in rows)
+    y += 14
+    for key, label, note in rows:
+        v = sm[key]
+        cy = y + 14
+        body.append(text(0, cy - 1, label, t, 13, "ink"))
+        body.append(text(0, cy + 15, note, t, 11, "ink2"))
+        w = span * v["mean_tokens"] / top
+        body.append(bar(X0, cy - 8, w, 16, t["series"][0] if key == "clean" else t["muted"]))
+        body.append(text(X0 + w + 8, cy - 1, f"{v['mean_tokens'] / 1000:.0f}K tokens", t, 12, "ink", weight=600))
+        body.append(text(X0 + w + 8, cy + 14, f"{v['mean_turns']:.1f} steps · {v['mean_seconds']:.0f} s · worst {v['max_turns']} steps", t, 11, "muted"))
+        y += row_h
+    body.append(f'<line x1="{X0}" y1="{y - row_h * len(rows) + 2}" x2="{X0}" y2="{y}" stroke="{t["grid"]}" stroke-width="1"/>')
+    return svg(t, y + 10, title, body)
+
+
 def dumbbell(title, sub, rows, t):
     """Each row: before (gray, = 100%) and after (accent) on one 0-100% axis, so different units share a scale."""
     X0, X1 = 260, W - 82
@@ -151,8 +178,9 @@ def main():
     rw = json.loads((HERE / "realworld.json").read_text(encoding="utf-8"))
     v0, v1 = rw["verdicts"]["1.0.0"], rw["verdicts"]["1.1.0"]
     best = max(rw["by_type"], key=lambda r: r["size_reduction_pct"]["max"])
-    files_cut = 100 * (1 - rw["after"]["files"] / rw["before"]["files"])
     wrong0 = 100 * v0["wrong"] / v0["auto"]
+    ae = json.loads((HERE / "agent-eval.json").read_text(encoding="utf-8"))["summary"]
+    agent_cut = 100 * (1 - ae["clean"]["mean_tokens"] / ae["messy"]["mean_tokens"])
     OUT.mkdir(exist_ok=True)
     for old in OUT.glob("*.svg"):
         old.unlink()
@@ -160,11 +188,12 @@ def main():
         charts = {
             "stats": stats([
                 (f"−{best['size_reduction_pct']['max']:.0f}%", "smaller, at best", best["type"].lower()),
-                (f"−{files_cut:.0f}%", "files across all tested projects", f"{rw['before']['files']:,} → {rw['after']['files']:,}"),
+                (f"−{agent_cut:.0f}%", "tokens for an agent to find code", "after cleanup, measured"),
                 (f"{rw['mechanical']['lost']}", "files lost", f"{rw['mechanical']['files_checked']:,} checked"),
                 (f"{wrong0:.1f}% → {100 * v1['wrong'] / max(v1['auto'], 1):.0f}%", "wrong automatic decisions", "v1.0 → v1.1, reviewed by hand"),
             ], t, "Thanks Mom in numbers"),
             "by-type": type_chart(rw, t),
+            "agent": agent_chart(json.loads((HERE / "agent-eval.json").read_text(encoding="utf-8")), t),
             "benchmark": dumbbell(
                 "Synthetic benchmark: before and after",
                 ["A messy Python + Next.js project with real npm and pip installs and seven traps.",

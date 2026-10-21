@@ -30,14 +30,13 @@ Mom cleans your room but never throws out anything you might still need. Every s
 5. **Apply.** `MOM apply . --archive <ids> --delete <ids> --keep <ids> --move <ids> [--archive-path PATH ...]`, using the answers from steps 3 and 4. Ids accept ranges (`4-30`). `--move` approves suggested moves that were asked about (more than 10 loose docs at once become one question).
 6. **Reorganise code (optional).** Only when git was clean and step 1 had a passing test command. Move source into a standard layout ([references/layouts.md](references/layouts.md)), update imports and paths (grep for every old path, including package.json, Dockerfile and CI), then re-run the tests. If they fail, revert with git and report. For quick vibe-coded projects, skip this step: the cleanup already did the work.
 7. **Verify.** Re-run the step 1 command and compare. If deleted deps are needed for that, restore them first (`npm ci`, or a venv from `requirements.freeze.txt`). If anything got worse, run `MOM undo .` and tell the user.
-8. **Map.** Run `MOM map .` and write `PROJECT_MAP.md`: the tree with a one-line purpose per folder, 60 lines max. List files only at the root and for key entry points. Add "where to find X" lines (entry point, tests, config) and one line per tool in `tools/` (`tools/read_doc.py PATH`: text of pdf/docx/xlsx/csv). Then make sure CLAUDE.md (create it if missing) has this block and nothing more from you:
+8. **Map.** Run `MOM map .` and write `PROJECT_MAP.md` for people: the tree with a one-line purpose per folder, 60 lines max. List files only at the root and for key entry points. Add "where to find X" lines (entry point, tests, config) and one line per tool in `tools/` (`tools/read_doc.py PATH`: text of pdf/docx/xlsx/csv). Then make sure CLAUDE.md (create it if missing) has this block and nothing more from you:
    ```
-   ## Project map & house rules
-   - Read PROJECT_MAP.md before searching for files.
-   - Reusable helpers live in tools/ (listed in PROJECT_MAP.md). Use or extend one before writing a new script.
+   ## House rules
+   - Reusable helpers live in tools/. Use or extend one before writing a new script.
    - Throwaway scripts go in .scratch/ (gitignored), never the project root.
    ```
-   Use a pointer, not `@PROJECT_MAP.md`. That costs ~60 tokens per session instead of the whole map, and it survives context compaction because CLAUDE.md is reloaded.
+   Add `- Read PROJECT_MAP.md before searching for files.` to that block **only for large projects** (many hundreds of source files, or when the user asks). In a measured test on a ~40-module project, that line made agents read the map on every task: about 25% more tokens than searching a clean tree. It did cap the worst case, though (bench/agent_eval.py). Use a pointer, never `@PROJECT_MAP.md`, so the map isn't loaded into every session.
 9. **Report** in one short table: size, file count and root items, before and after; what was deleted, boxed up and moved; where the zip is. End with: undo = `MOM undo .`, deps come back with the commands mom.py printed, and old safety zips can be removed with `MOM prune .` (older than 30 days by default) once the user is happy.
 
 ## Other jobs

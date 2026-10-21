@@ -15,7 +15,10 @@ New:
 - **`mom.py worktrees ROOT`** lists every git worktree with its size, unsaved changes and commits not yet in the main branch, and prints `git worktree remove` commands for the safe ones only. It is read-only.
 - **`mom.py report DIR`** gives a read-only overview of every project under a folder: size, how much is rebuildable, how much is worktrees, and last change.
 - **`mom.py prune ROOT [--days 30]`** deletes old safety zips. The scan reminds you when old ones pile up.
-- `bench/agent_eval.py` measures, with headless Claude Code, whether a cleaned project with `PROJECT_MAP.md` helps an agent find code.
+- `bench/agent_eval.py` measures, with headless Claude Code, whether a tidy project helps an agent find code. Result on a ~40-module project: the cleanup cut tokens by 31% and time by 31%. A project map did not make the agent faster.
+
+Changed:
+- `CLAUDE.md` gets the "read PROJECT_MAP.md first" line only in large projects. In the measured test it cost about 25% more tokens than plain search on a small project. `PROJECT_MAP.md` is still written, for people.
 
 Fixed:
 - The benchmark no longer reports "recursive file listing tokens". Claude Code's own search already skips gitignored folders, so that number overstated the gain.

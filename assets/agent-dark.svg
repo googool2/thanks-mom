@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="280" viewBox="0 0 760 280" role="img" aria-label="Does a tidy project help an agent?" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif'>
+<title>Does a tidy project help an agent?</title>
+<text x="0.0" y="20.0" font-size="16" fill="#f0efec" text-anchor="start" font-weight="600">Does a tidy project help an agent?</text>
+<text x="0.0" y="40.0" font-size="12" fill="#c3c2b7" text-anchor="start" font-weight="400">Claude Code (sonnet) answering 8 "which file does X?" questions on a ~40-module project,</text>
+<text x="0.0" y="57.0" font-size="12" fill="#c3c2b7" text-anchor="start" font-weight="400">2 runs each. All 64 answers were correct. Bar: mean tokens per question.</text>
+<text x="0.0" y="107.0" font-size="13" fill="#f0efec" text-anchor="start" font-weight="400">Before cleanup</text>
+<text x="0.0" y="123.0" font-size="11" fill="#c3c2b7" text-anchor="start" font-weight="400">old copies, backup/, loose plans</text>
+<path d="M270.0,100.0 h286.0 q4.0,0 4.0,4.0 v8.0 q0,4.0 -4.0,4.0 h-286.0 z" fill="#898781"/>
+<text x="568.0" y="107.0" font-size="12" fill="#f0efec" text-anchor="start" font-weight="600">108K tokens</text>
+<text x="568.0" y="122.0" font-size="11" fill="#898781" text-anchor="start" font-weight="400">4.4 steps · 16 s · worst 9 steps</text>
+<text x="0.0" y="151.0" font-size="13" fill="#f0efec" text-anchor="start" font-weight="400">After cleanup</text>
+<text x="0.0" y="167.0" font-size="11" fill="#c3c2b7" text-anchor="start" font-weight="400">no map</text>
+<path d="M270.0,144.0 h194.8 q4.0,0 4.0,4.0 v8.0 q0,4.0 -4.0,4.0 h-194.8 z" fill="#3987e5"/>
+<text x="476.8" y="151.0" font-size="12" fill="#f0efec" text-anchor="start" font-weight="600">74K tokens</text>
+<text x="476.8" y="166.0" font-size="11" fill="#898781" text-anchor="start" font-weight="400">3.0 steps · 11 s · worst 7 steps</text>
+<text x="0.0" y="195.0" font-size="13" fill="#f0efec" text-anchor="start" font-weight="400">After cleanup + map</text>
+<text x="0.0" y="211.0" font-size="11" fill="#c3c2b7" text-anchor="start" font-weight="400">CLAUDE.md: read the map first</text>
+<path d="M270.0,188.0 h243.6 q4.0,0 4.0,4.0 v8.0 q0,4.0 -4.0,4.0 h-243.6 z" fill="#898781"/>
+<text x="525.6" y="195.0" font-size="12" fill="#f0efec" text-anchor="start" font-weight="600">92K tokens</text>
+<text x="525.6" y="210.0" font-size="11" fill="#898781" text-anchor="start" font-weight="400">3.4 steps · 13 s · worst 5 steps</text>
+<text x="0.0" y="239.0" font-size="13" fill="#f0efec" text-anchor="start" font-weight="400">After cleanup + map</text>
+<text x="0.0" y="255.0" font-size="11" fill="#c3c2b7" text-anchor="start" font-weight="400">CLAUDE.md: read the map when stuck</text>
+<path d="M270.0,232.0 h244.0 q4.0,0 4.0,4.0 v8.0 q0,4.0 -4.0,4.0 h-244.0 z" fill="#898781"/>
+<text x="526.0" y="239.0" font-size="12" fill="#f0efec" text-anchor="start" font-weight="600">93K tokens</text>
+<text x="526.0" y="254.0" font-size="11" fill="#898781" text-anchor="start" font-weight="400">3.6 steps · 14 s · worst 9 steps</text>
+<line x1="270" y1="96" x2="270" y2="270" stroke="#2c2c2a" stroke-width="1"/>
+</svg>

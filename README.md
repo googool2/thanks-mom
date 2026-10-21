@@ -26,7 +26,7 @@ A clean room isn't an empty room. It's a room where you can find everything.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/stats-dark.svg">
-  <img alt="Up to 96 percent smaller, 72 percent fewer files across tested projects, 0 files lost, wrong automatic decisions from 11.5 percent to 0 percent between v1.0 and v1.1" src="assets/stats-light.svg" width="760">
+  <img alt="Up to 96 percent smaller, 31 percent fewer tokens for an agent to find code after cleanup, 0 files lost, wrong automatic decisions from 11.5 percent to 0 percent between v1.0 and v1.1" src="assets/stats-light.svg" width="760">
 </picture>
 
 ## What she does
@@ -40,7 +40,7 @@ Say **"thanks mom"** inside a project and Claude:
 | 🙋 **Asks about the rest** | one short question per kind of thing, with the facts: size, last change, whether anything uses it |
 | 🧰 **Merges copy-paste scripts** | near-identical one-off scripts become one reusable tool in `tools/` |
 | 🗂️ **Tidies the root** | loose docs move into `docs/` in code projects |
-| 🗺️ **Leaves a map** | `PROJECT_MAP.md` plus a three-line pointer in `CLAUDE.md`, so an agent finds its way after a context reset |
+| 🗺️ **Leaves a map** | `PROJECT_MAP.md` explains every folder. In large projects, a line in `CLAUDE.md` tells agents to read it first |
 | 🌳 **Finds forgotten worktrees** | lists every git worktree with its size, unsaved changes and unmerged commits, and which ones are safe to remove |
 | 📊 **Surveys all your projects** | one read-only report of which projects are heavy and how much of each can be rebuilt |
 | ↩️ **Undoes everything** | `mom.py undo .` puts every boxed-up and moved file back, byte for byte |
@@ -130,6 +130,17 @@ v1.0 never lost a file, but it trusted one bad rule: identical files are junk. I
 
 Run the same test on your own projects with `python bench/realworld.py WORKDIR results.json PROJECT_DIR...`. It works on copies and deletes them when done.
 
+### Does it help agents?
+
+Same project, three states, measured with headless Claude Code: eight "which file does X?" questions, two runs each.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/agent-dark.svg">
+  <img alt="Mean tokens per question: before cleanup 108K, after cleanup 74K, after cleanup with a map read first 92K, with a map read when stuck 93K. All answers correct." src="assets/agent-light.svg" width="760">
+</picture>
+
+**The cleanup is what helps.** Without the old copies and leftovers to wade through, the agent used **31% fewer tokens and 31% less time**, and got every answer right in every state. A project map did **not** make it faster on a project this size. Telling the agent to read the map first cost about 25% more tokens than plain search, though it did cap the worst case at 5 steps. So mom writes `PROJECT_MAP.md` for people, and adds the "read the map first" line to `CLAUDE.md` only in large projects. Rerun it yourself with `python bench/agent_eval.py WORKDIR`, which uses your Claude Code quota (about $2.50 here).
+
 ### Synthetic benchmark (CI)
 
 A messy Python + Next.js project with real `npm` and `pip` installs and seven **traps** that look like junk but aren't. Examples are a module named `backup.py`, a hand-made `dist/`, `.env`, and uploads a database points to. Every question gets the most aggressive answer. It runs on Linux, macOS and Windows on every push.
@@ -156,16 +167,15 @@ Full report: [bench/RESULTS.md](bench/RESULTS.md).
 
 ## For agents: stop rewriting the same script
 
-Agents often write `read_pdf_tmp.py`, then `read_docx_tmp.py`, then `read_xlsx.py`: the same twenty lines each time. Mom spots near-identical scripts, Claude merges them into one tool that takes arguments, and three lines go into `CLAUDE.md`:
+Agents often write `read_pdf_tmp.py`, then `read_docx_tmp.py`, then `read_xlsx.py`: the same twenty lines each time. Mom spots near-identical scripts, Claude merges them into one tool that takes arguments, and two lines go into `CLAUDE.md`:
 
 ```
-## Project map & house rules
-- Read PROJECT_MAP.md before searching for files.
-- Reusable helpers live in tools/ (listed in PROJECT_MAP.md). Use or extend one before writing a new script.
+## House rules
+- Reusable helpers live in tools/. Use or extend one before writing a new script.
 - Throwaway scripts go in .scratch/ (gitignored), never the project root.
 ```
 
-It's a pointer, not an `@import`, so it costs about 60 tokens per session. The whole skill costs about 1.6k tokens, and a scan summary about 400.
+In large projects a third line, `Read PROJECT_MAP.md before searching for files.`, points agents at the map. The whole skill costs about 1.6k tokens, and a scan summary about 400.
 
 ## Without an agent
 
