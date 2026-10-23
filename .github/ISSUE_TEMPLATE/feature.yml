@@ -1,0 +1,17 @@
+name: Idea
+description: A new rule, a folder mom should recognize, or a new command.
+title: "[idea] "
+labels: ["idea"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What's messy or slow today? Example folders or file names help.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What mom could do
+      description: For anything that removes or moves files, say how mom can prove it's safe (for example, a lockfile or build script next to it).

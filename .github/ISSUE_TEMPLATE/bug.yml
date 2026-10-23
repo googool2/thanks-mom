@@ -1,0 +1,25 @@
+name: Bug
+description: A crash, an error, or a command that doesn't do what the README says.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The command you ran, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: The error or summary output. Remove anything private.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Version, OS, Python
+      placeholder: Thanks Mom 1.2.0, Windows 11, Python 3.14
+    validations:
+      required: true

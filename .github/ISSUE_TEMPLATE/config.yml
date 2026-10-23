@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Lost data or a security problem
+    url: https://github.com/googool2/thanks-mom/security/advisories/new
+    about: Report it privately, not in a public issue.

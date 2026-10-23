@@ -1,0 +1,50 @@
+name: Wrong decision
+description: Mom deleted, boxed up, moved or asked about something she shouldn't have.
+title: "[wrong decision] "
+labels: ["wrong-decision"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks, these reports are the most useful kind. `mom.py undo .` brings boxed-up and moved files back.
+        If something was lost for good, report it privately instead: Security tab → **Report a vulnerability**.
+  - type: dropdown
+    id: action
+    attributes:
+      label: What did mom do?
+      options:
+        - Deleted it (as rebuildable or junk)
+        - Boxed it up (into the zip)
+        - Moved it
+        - Asked about it, but it was obviously needed
+        - Left it, but it was obviously junk
+    validations:
+      required: true
+  - type: input
+    id: path
+    attributes:
+      label: The file or folder
+      description: The path relative to the project, or a made-up path of the same shape if the real one is private.
+      placeholder: e.g. results/run_s2_eval.csv
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it's needed
+      description: What uses it? For example, a script loads it by pattern, a framework expects it by name, or it's referenced without its extension.
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: The line from the scan summary
+      description: The relevant line(s) from `mom.py scan .`
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Version, OS, Python
+      placeholder: Thanks Mom 1.2.0, macOS 15, Python 3.12
+    validations:
+      required: true
